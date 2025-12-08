@@ -1,0 +1,2 @@
+#!/home/monst/.nvm/versions/node/v22.16.0/bin/node
+console.log("hello, world!");
