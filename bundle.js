@@ -1,3 +1,18 @@
+(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+let Phrase = require("monchan-palindrome");
+let string = prompt("パリンドロームをテストしたい文字列を入力してください：");
+
+let phrase = new Phrase(string);
+if(phrase.palindrome()) {
+  alert(`${phrase.content}はパリンドロームです`);
+} else {
+  alert(`${phrase.content}はパリンドロームでははありません`);
+}
+
+
+},{"monchan-palindrome":2}],2:[function(require,module,exports){
+module.exports = Phrase;
+
 // (Stringクラスのprototypeに)reverse()メソッドを追加してすべてのStringオブジェクトで使えるようにする。
 String.prototype.reverse = function() {
   return Array.from(this).reverse().join("");
@@ -15,7 +30,22 @@ function Phrase(content) {
   this.processor = (string) => string.toLowerCase();
 
   // パリンドロームのテスト用に、変換したcontentを返すメソッド
-  this.processedContent = () => this.processor(this.content);
+  this.processedContent = () => this.processor(this.letters());
+
+  // コンテンツの文字だけを返す
+  // 利用例: new Phrase("Hello, world!").letters() === "Helloworld"
+  this.letters = () => (this.content.match(/[a-z]/gi) || []).join("") ;
+  // matchでregExにglobalオプションを付けると該当の複数要素を直接配列にして返してくれる。
+  // しかし、該当要素がない場合には空の配列ではなくNullを返してしまうため、Null=Falseであることを利用し、||(OR論理子)でその場合に空の配列[]を返すようにする。
+
+  // もっとストレートな記述は下記の通り
+  // this.letters = () => {
+  //   const letterRegex = /[a-z]/i; // iフラグで大文字小文字を無視
+  //   return Array.from(this.content).filter(c => c.match(letterRegex)).join("");
+  // }
+  // その省略形は下記の通り
+  // this.letters = () => Array.from(this.content).filter(c => c.match(/[a-z]/i)).join("");
+
 
   // パリンドロームならtrueを、違うならfalseを返すメソッド
   this.palindrome = () => this.processedContent() === this.processedContent().reverse();
@@ -50,3 +80,4 @@ String.prototype.blank = function() {
   // なければNullを返す。
   // 's+'だと１文字以上なので空文字が対象外となってしまう。
 }
+},{}]},{},[1]);
