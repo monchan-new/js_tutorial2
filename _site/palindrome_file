@@ -1,0 +1,14 @@
+#! /home/monst/.nvm/versions/node/v22.16.0/bin/node
+let fs = require("fs");
+let Phrase = require("monchan-palindrome");
+
+let text = fs.readFileSync("phrases.txt", "utf-8");
+text.split("\n").forEach( (line) => {
+  let phrase = new Phrase(line);
+  if(phrase.palindrome()) {
+    console.log("検出されたパリンドローム:", line);
+  }
+  // if(phrase.palindrome()) {
+  //   fs.appendFileSync('palindromes.txt', line + "\n");
+  // }
+});

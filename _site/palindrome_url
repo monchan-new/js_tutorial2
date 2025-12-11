@@ -1,0 +1,26 @@
+#! /home/monst/.nvm/versions/node/v22.16.0/bin/node
+
+let urllib = require("urllib");
+let Phrase = require("monchan-palindrome");
+let url = 'https://cdn.learnenough.com/phrases.txt'
+
+async function fetchPalindrome() {
+  let { error, data, response } = await urllib.request(url, { followRedirect: true });
+  let body = data.toString();
+  // body.split("\n").forEach( (line) => {
+  //   let phrase = new Phrase(line);
+  //   if(phrase.palindrome()) {
+  //     console.log('検出されたパリンドローム：', line);
+  //   }
+  // });
+  let lines = body.split('\n');
+  let palindromes = lines.filter( (line) => {
+    let phrase = new Phrase(line);
+    return phrase.palindrome();
+  });
+  palindromes.forEach( (palindrome) => {
+    console.log('検出されたパリンドローム：', palindrome);
+  });
+}
+
+fetchPalindrome();
