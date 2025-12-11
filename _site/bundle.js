@@ -1,15 +1,29 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 let Phrase = require("monchan-palindrome");
-let string = prompt("パリンドロームをテストしたい文字列を入力してください：");
 
-let phrase = new Phrase(string);
-if(phrase.palindrome()) {
-  alert(`${phrase.content}はパリンドロームです`);
-} else {
-  alert(`${phrase.content}はパリンドロームでははありません`);
+let palindromeTester = (event) => {
+  event.preventDefault();   
+  // ここでのeventはフォームの送信であり、そのデフォルト動作は「送信 → ページリロード」である
+  // この動作を防止することによりリロードされないようにし、JS処理でpタグ内に挿入した内容が素のHTMLで上書きされない(＝消されない)ようにする
+  let phrase = new Phrase(event.target.phrase.value);
+  // eventのtargetはformオブジェクト全体であり、この指定でname="phrase"のtestareaタグのvalue(内容)を取り出すことが出来る
+  let palindromeResult = document.querySelector("#palindromeResult");
+
+  if(phrase.palindrome()) {
+    palindromeResult.innerHTML =`"<strong>${phrase.content}</strong>"はパリンドロームです`;
+  } else {
+    palindromeResult.innerHTML =`"<strong>${phrase.content}</strong>"はパリンドロームではありません`;
+  }
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+// DOMコンテンツの読み込みが完了していないと
+// buttonオブジェクトの認識ができない
+  let tester = document.querySelector("#palindromeTester");
+  tester.addEventListener("submit", (event) =>  palindromeTester(event)); 
 
+  // button.addEventListener("click", palindromeTester ); // この場合はcallback関数の省略形なので()はつけないことに注意。
+});
 },{"monchan-palindrome":2}],2:[function(require,module,exports){
 module.exports = Phrase;
 
@@ -48,7 +62,15 @@ function Phrase(content) {
 
 
   // パリンドロームならtrueを、違うならfalseを返すメソッド
-  this.palindrome = () => this.processedContent() === this.processedContent().reverse();
+  this.palindrome = () => {
+    if(this.processedContent()) { 
+      return this.processedContent() === this.processedContent().reverse();
+    } else {
+    // 空文字の場合には必ずFalseを返す   
+      return false;
+    }
+  }
+    
 }
 
 // TranslatedPhraseオブジェクトを定義する
