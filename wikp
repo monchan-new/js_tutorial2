@@ -1,0 +1,36 @@
+#!/home/monst/.nvm/versions/node/v22.16.0/bin/node
+
+// Wikipediaのリンクからパラグラフを取得して脚注番号を取り除く
+let urllib = require("urllib");
+let url = process.argv[2];
+if(!url) {
+  console.error("対象とするWikipedia記事のURLを指定してください");
+  process.exit(1);
+}
+let fs = require("fs");
+
+const jsdom = require("jsdom");
+const { JSDOM } = jsdom;
+// jsdomモジュールからエクスポートされたjsdomオブジェクトを取得し、その中の一つのプロパティであるJSDOMクラス（実質はコンストラクタ関数でありJSではクラスという形で扱える様に糖衣している）だけを取り出す。
+
+async function fetchAndProcessArricle() {
+  let { error, data, response } = await urllib.request(url, { followRedirect: true });
+  let body = data.toString();
+  // DOMをシミュレートする
+  let { document } = (new JSDOM(body)).window;
+  // body に入っている HTML 文字列をパースして仮想 DOM 環境を作成するJSDOM クラスのインスタンスを作成する。そのインスタンスが持つ （windowオブジェクトに相当する）window プロパティを参照し、そのうち（documentオブジェクトに相当する）documentプロパティを取り出す。
+
+  // すべてのパラグラフと参照情報を一括で取り出す
+  let paragraphs = document.querySelectorAll("p");
+  let references = document.querySelectorAll(".reference");
+
+  // 参照情報を削除する
+  references.forEach( (reference) => reference.remove() );
+  
+  // すべてのパラグラフを出力する
+  paragraphs.forEach( (paragraph) => console.log(paragraph.textContent) ) ;
+  // paragraphs.forEach( (paragraph) => fs.appendFileSync('wikp.txt', paragraph.textContent) ) ;
+
+}
+
+fetchAndProcessArricle();

@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "jsdom": "^27.3.0",
     "monchan-palindrome": "^0.2.0",
     "urllib": "^4.8.2"
   }
